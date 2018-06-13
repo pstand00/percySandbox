@@ -1,4 +1,3 @@
-# hello-world1
-Warm up exercises
+# Personal Sandbox
 
-This is a warm up exercise to get familiar with GitHub functionality.  
+Repository for personal projects
