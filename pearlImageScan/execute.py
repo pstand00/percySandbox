@@ -7,6 +7,9 @@ Created on Sun May 15 21:31:19 2022
 
 # code to scan a series of images and send via text message 
 
+## add a try statement that only texts me if there's an error 
+## see if i can "force" what the "email text is from" [ie "my austomation" instead of "peterstandbridge@gamil"]
+
 # req packages 
 # ========================================================
 import os
