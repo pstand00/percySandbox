@@ -1,0 +1,1 @@
+"C:\Program Files\AutoHotkey\AutoHotkeyU64.exe" "C:\Users\Pete\Documents\GitHub\percySandbox\macKeyboardMap\keyboardMap.ahk"
