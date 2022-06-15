@@ -32,9 +32,10 @@ from email.mime.base import MIMEBase
 # define working directory and date and passwords
 # ========================================================
 wFm = os.getenv('userprofile')
-currentTimestampUtc = datetime.datetime.utcnow()
-currentTimestampEst = currentTimestampUtc.astimezone(pytz.timezone('US/Eastern')).strftime('%Y-%m-%d %H:%M:%S')
-currentTimestampEstDt = datetime.datetime.strptime(currentTimestampEst,"%Y-%m-%d %H:%M:%S")
+# currentTimestampUtc = datetime.datetime.utcnow()
+# currentTimestampEst = currentTimestampUtc.astimezone(pytz.timezone('US/Eastern')).strftime('%Y-%m-%d %H:%M:%S')
+currentTimestampEstDt = datetime.datetime.now()
+# currentTimestampEstDt = datetime.datetime.strptime(currentTimestampEst,"%Y-%m-%d %H:%M:%S")
 currentDayOfWeek = currentTimestampEstDt.strftime('%A')
 fromEmail = "peter.standbridge@gmail.com"
 toEmail = "4126805149@mms.att.net"
