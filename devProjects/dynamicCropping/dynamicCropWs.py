@@ -119,46 +119,27 @@ import csv
 pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 
-# image 1 - the first attempt to get it working, but a lil sloppy
+# image 1 - 
 # ============================================================
-dynImage1 = Image.open(newFile1)
-imageData1 = pytesseract.image_to_boxes(dynImage1)
-results = pytesseract.image_to_data(dynImage1)
-resultsDf = pd.read_csv(io.StringIO(results), sep = '\t')
-
-resultsDfLite = resultsDf[(resultsDf['text'] == 'Retweets') ]
-retweetsTop = int(resultsDfLite['top'].to_string(index=False, header= False).strip())
-
-# writeImageData to csv
-
-# convert imageData1 index to a string 
-imageDf1 = pd.read_fwf(io.StringIO(imageData1), header = None)
-fullText1 = ''
-for i in imageDf1[0]:
-    #newTxt = i.to_string(index=False, header= False).strip()
-    print(fullText1)
-    print(i)
-    fullText1 = fullText1 + i 
-    print(fullText1)
-    
-    
+dynImage1 = Image.open(fileName1)
+textLocResults1 = pytesseract.image_to_data(dynImage1)
+textLocResultsDf1 = pd.read_csv(io.StringIO(textLocResults1), sep = '\t')
 # find the location of the word "Retweet" [Nth character]
-rtLoc1 = fullText1.find('Retweet')
-# then, pull then Nth row from imageData1 to get the pixel position 
-rtLocDf1 = imageDf1.iloc[rtLoc1]
-rtPosFinal = rtLocDf1[1]
+textLocResultsDfLite1 = textLocResultsDf1[(textLocResultsDf1['text'] == 'Retweets') ].head(1)
+retweetsTop1 = int(textLocResultsDfLite1['top'].to_string(index=False, header= False).strip())
 # then, crop at that location + 10 or so 
 width, height = dynImage1.size 
-left = 0 
+left = 0
+left =  445
 top = 0 
-right = width
-bottom = retweetsTop # rtPosFinal # nned to get this dynamically from image_to_data() function
+top = 45
+right = width - 560
+bottom = retweetsTop1 - 25 # 25 was a good number to account for the twitter spacing 
 myNewImage = dynImage1.crop((left, top, right, bottom))
-myNewImage.save(wd +'\\final1.png',optimize=True,quality=95)
-newFile = 'final1.png'
+myNewImage.save(wd +'\\final1.png',optimize=True,quality=100)
 
 
-# image 2 - only the required commands (although still need packages from above )
+# image 2 - 
 # ============================================================
 dynImage2 = Image.open(fileName2)
 textLocResults2 = pytesseract.image_to_data(dynImage2)
@@ -168,14 +149,31 @@ textLocResultsDfLite2 = textLocResultsDf2[(textLocResultsDf2['text'] == 'Retweet
 retweetsTop2 = int(textLocResultsDfLite2['top'].to_string(index=False, header= False).strip())
 # then, crop at that location + 10 or so 
 width, height = dynImage2.size 
-left = 0 
+left = 0
+left =  445
 top = 0 
-right = width
-bottom = retweetsTop2 # rtPosFinal # nned to get this dynamically from image_to_data() function
+top = 45
+right = width - 560
 bottom = retweetsTop2 - 25 # 25 was a good number to account for the twitter spacing 
 myNewImage = dynImage2.crop((left, top, right, bottom))
-myNewImage.save(wd +'\\final2.png',optimize=True,quality=95)
-newFile = 'final2.png'
+myNewImage.save(wd +'\\final2.png',optimize=True,quality=100)
+
 
 # image 3 - try to get the left and right figured out here 
 # ============================================================
+dynImage3 = Image.open(fileName3)
+textLocResults3 = pytesseract.image_to_data(dynImage3)
+textLocResultsDf3 = pd.read_csv(io.StringIO(textLocResults3), sep = '\t')
+# find the location of the word "Retweet" [Nth character]
+textLocResultsDfLite3 = textLocResultsDf3[(textLocResultsDf3['text'] == 'Retweets') ].head(1)
+retweetsTop3 = int(textLocResultsDfLite3['top'].to_string(index=False, header= False).strip())
+# then, crop at that location + 10 or so 
+width, height = dynImage3.size 
+left = 0
+left =  445
+top = 0 
+top = 45
+right = width - 560
+bottom = retweetsTop3 - 25 # 25 was a good number to account for the twitter spacing 
+myNewImage = dynImage3.crop((left, top, right, bottom))
+myNewImage.save(wd +'\\final3.png',optimize=True,quality=100)
