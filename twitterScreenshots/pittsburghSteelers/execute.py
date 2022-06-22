@@ -143,10 +143,12 @@ else:
     os.chdir(screenshotWd)
     # image 1 
     async def main():
-        browser = await pyppeteer.launch()
+       #  browser = await pyppeteer.launch()
+        browser = await pyppeteer.launch(headless=True, executablePath='C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' )
         page = await browser.newPage()
         await page.setViewport({"width": 1600, "height": 900})
         await page.goto(inProcessUrl)
+        #await page.goto(inProcessUrl, {"waitUntil" : "networkidle0"})
         time.sleep(5)
         await page.screenshot({'path': screenshotFileName, 'fullPage':True})
         await browser.close()
@@ -157,15 +159,30 @@ else:
     # ================================================
     fullImage = Image.open(screenshotWd + '\\' + screenshotFileName)
     width, height = fullImage.size 
-    fullImageResults = pytesseract.image_to_data(fullImage)
+    # === attempting to convert image to grayscale to better read the data from 
+    import cv2
+    import numpy as np
+    fullImageCv = cv2.imread(screenshotFileName)
+    gray = cv2.cvtColor(fullImageCv, cv2.COLOR_BGR2GRAY)
+    sharpen_kernel = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
+    sharpen = cv2.filter2D(gray, -1, sharpen_kernel)
+    # cv2.imshow('sharpen', sharpen)
+    thresh = cv2.threshold(sharpen, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]    
+    data = pytesseract.image_to_string(thresh, lang='eng', config='--psm 6')
+    print(data)
+    # === end of attempt
+    # fullImageResults = pytesseract.image_to_data(fullImage)
+    fullImageResults = pytesseract.image_to_data(thresh)
     fullImageResultsDf = pd.read_csv(io.StringIO(fullImageResults), sep = '\t', engine = "python", encoding = 'utf-8', error_bad_lines=False)
     # find the location of the word "Retweet" [Nth character]
     fullImageResultsDfLite = fullImageResultsDf[fullImageResultsDf.text.notnull()]
     # sometimes the image ai app messes up retweets, so add any close variations below: 
+    # 	Retweets
     searchableStrings = ['Retweets', 'Retwests']
     fullImageResultsDfLite = fullImageResultsDfLite[fullImageResultsDfLite['text'].str.contains('|'.join(searchableStrings))]
     retweetsTop = int(fullImageResultsDfLite['top'].to_string(index=False, header= False).strip())
     # then, crop at that location + 10 or so 
+    # need to rework the specific numbers 
     left = 0
     left =  445
     top = 0 
@@ -175,7 +192,6 @@ else:
     croppedImage = fullImage.crop((left, top, right, bottom))
     croppedImage.save(screenshotWd +'\\screenshot_cropped.png',optimize=True,quality=100)
     newFile = 'screenshot_cropped.png'
-    
     # send a text to pete containing the image and caption 
     # ================================================
     # will eventually be an instagram post 
