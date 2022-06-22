@@ -41,7 +41,7 @@ from email.utils import COMMASPACE, formatdate
 from email import encoders
 import smtplib
 # directory 
-wd = "C:\\Users\\Pete\\Documents\\GitHub\\percySandbox\\twitterScreenshots\pittsburghSteelers"
+wd = "C:\\Users\\Pete\\Documents\\GitHub\\percySandbox\\twitterScreenshots\\pittsburghSteelers"
 screenshotWd = wd + "\\screenshots"
 os.chdir(wd)
 print('Currently working in: ' + os.getcwd())
@@ -192,6 +192,70 @@ else:
     croppedImage = fullImage.crop((left, top, right, bottom))
     croppedImage.save(screenshotWd +'\\screenshot_cropped.png',optimize=True,quality=100)
     newFile = 'screenshot_cropped.png'
+    newFilePad = 'screenshot_padding.png'
+    
+    # pad the screenshot to have some borders [aka will square enough for ig]
+    # ================================================
+    # define how extreme we can get with the width or height of our picture
+    # using this as my source, but need to stay current:
+    # https://colorlib.com/wp/size-of-the-instagram-picture/
+    # Instagram Landscape (horizontal) Photo	1080 X 608 (1.91:1 ratio)
+    # Instagram Portrait	1080 x 1350 (4:5 ratio)
+    landscapeRatio = (1 / 1.91) 
+    portraitRatio = (4 / 5)
+    
+    topImage = croppedImage
+    widthTop, heightTop = topImage.size 
+    if widthTop > heightTop:
+        orientation = 'Landscape'
+        # check if the current dimensions meet the min 
+        if heightTop < landscapeRatio * widthTop:
+            print('image isnt square enough ')
+            # create background shape (white color)
+            widthRect, heightRect = widthTop, (landscapeRatio * widthTop)
+            shape = [(0, 0), (widthRect, heightRect)] # where 0, 0 is the starting point and # w, h is the size of the rectangle 
+            rectImage = Image.new("RGB", (widthRect, int(heightRect)))
+            # create rectangle image
+            rectImageDraw = ImageDraw.Draw(rectImage)  
+            rectImageDraw.rectangle(shape, fill ="white")
+            # rectImage.show()
+            # place the top image 
+            rectImageMerge = rectImage
+            # will need to use the following equation for landscape mode .... int((widthRect - widthTop) / 2)
+            rectImageMerge.paste(topImage, (0, int((heightRect - heightTop) / 2)), topImage)
+            # rectImageMerge.show()
+            rectImageMerge.save(screenshotWd +'\\screenshot_padding.png',optimize=True,quality=100)
+            # save the image as "screenshot_padding.png"
+        else: 
+            print('image is square enough')
+            croppedImage.save(screenshotWd +'\\screenshot_padding.png',optimize=True,quality=100)
+            # save the image as "screenshot_padding.png"
+    else:
+        orientation = 'Portrait'
+        if widthTop < portraitRatio * heightTop:
+            print('image isnt square enough ')
+            # create background shape (white color)
+            widthRect, heightRect = (portraitRatio * heightTop), heightTop
+            shape = [(0, 0), (widthRect, heightRect)] # where 0, 0 is the starting point and # w, h is the size of the rectangle 
+            rectImage = Image.new("RGB", (int(widthRect), heightRect))
+            # create rectangle image
+            rectImageDraw = ImageDraw.Draw(rectImage)  
+            rectImageDraw.rectangle(shape, fill ="white")
+            # rectImage.show()
+            # place the top image 
+            rectImageMerge = rectImage
+            # will need to use the following equation for landscape mode .... int((widthRect - widthTop) / 2)
+            rectImageMerge.paste(topImage, (int((widthRect - widthTop) / 2), 0), topImage)
+            # rectImageMerge.show()
+            rectImageMerge.save(screenshotWd +'\\screenshot_padding.png',optimize=True,quality=100)
+            # save the image as "screenshot_padding.png"
+        else: 
+            print('image is square enough')     
+            croppedImage.save(screenshotWd +'\\screenshot_padding.png',optimize=True,quality=100)
+            # save the image as "screenshot_padding.png"
+        
+    
+
     # send a text to pete containing the image and caption 
     # ================================================
     # will eventually be an instagram post 
@@ -207,7 +271,7 @@ else:
     bodyMime = MIMEText(captionText)
     msg.attach(bodyMime)
     # Open PDF file in binary mode
-    with open(newFile, "rb") as attachment:
+    with open(newFilePad, "rb") as attachment:
         # Add file as application/octet-stream
         # Email client can usually download this automatically as attachment
         part = MIMEBase("application", "octet-stream")
@@ -219,7 +283,7 @@ else:
     # Add header as key/value pair to attachment part
     part.add_header(
         "Content-Disposition",
-        f"attachment; filename= {newFile}",
+        f"attachment; filename= {newFilePad}",
     )
     
     # Add attachment to message and convert message to string
@@ -239,6 +303,7 @@ else:
     # delete the screenshots 
     os.remove(screenshotWd +'\\' + 'screenshot.png')
     os.remove(screenshotWd +'\\' + 'screenshot_cropped.png')
+    os.remove(screenshotWd +'\\' + 'screenshot_padding.png')
     # delete anything older than the last 30 tweets
     # gonna delete the last 3 or so for now 
     # nned to rework the below 
