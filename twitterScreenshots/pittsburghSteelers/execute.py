@@ -32,7 +32,7 @@ import pytesseract
 from pytesseract import pytesseract
 pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 import time
-from PIL import Image # pip install Pillow
+from PIL import Image, ImageDraw # pip install Pillow
 from email.mime.base import MIMEBase
 import email
 from email.mime.multipart import MIMEMultipart
@@ -173,7 +173,9 @@ else:
     # === end of attempt
     # fullImageResults = pytesseract.image_to_data(fullImage)
     fullImageResults = pytesseract.image_to_data(thresh)
+    # fullImageResults2 = pytesseract.image_to_data(fullImage)
     fullImageResultsDf = pd.read_csv(io.StringIO(fullImageResults), sep = '\t', engine = "python", encoding = 'utf-8', error_bad_lines=False)
+    # fullImageResultsDf2 = pd.read_csv(io.StringIO(fullImageResults2), sep = '\t', engine = "python", encoding = 'utf-8', error_bad_lines=False)
     # find the location of the word "Retweet" [Nth character]
     fullImageResultsDfLite = fullImageResultsDf[fullImageResultsDf.text.notnull()]
     # sometimes the image ai app messes up retweets, so add any close variations below: 
@@ -228,7 +230,8 @@ else:
             # save the image as "screenshot_padding.png"
         else: 
             print('image is square enough')
-            croppedImage.save(screenshotWd +'\\screenshot_padding.png',optimize=True,quality=100)
+            rectImageMerge = Image.open(screenshotWd + '\\' + newFile)
+            rectImageMerge.save(screenshotWd +'\\screenshot_padding.png',optimize=True,quality=100)
             # save the image as "screenshot_padding.png"
     else:
         orientation = 'Portrait'
@@ -251,7 +254,8 @@ else:
             # save the image as "screenshot_padding.png"
         else: 
             print('image is square enough')     
-            croppedImage.save(screenshotWd +'\\screenshot_padding.png',optimize=True,quality=100)
+            rectImageMerge = Image.open(screenshotWd + '\\' + newFile)
+            rectImageMerge.save(screenshotWd +'\\screenshot_padding.png',optimize=True,quality=100)
             # save the image as "screenshot_padding.png"
         
     
