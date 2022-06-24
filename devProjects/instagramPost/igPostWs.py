@@ -86,9 +86,15 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 
+from selenium.webdriver.chrome.options import Options
 
 # driver = webdriver.Chrome()
 
+chrome_options = Options()
+chrome_options.add_argument("--headless")
+chrome_options.binary_location = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+
+driver = webdriver.Chrome("C:\\Program Files\\chromedriver_win32\\chromedriver.exe", chrome_options=chrome_options)
 driver = webdriver.Chrome("C:\\Program Files\\chromedriver_win32\\chromedriver.exe")
 # driver.close()
 driver.get("http://www.instagram.com")#put here the adress of your page
@@ -135,8 +141,24 @@ actions.perform()
 
 # select the "new post" window 
 # was able to find this in developer tools 
-newButton2 = driver.find_element_by_class_name("_acub")
-newButton2.click()
+
+# find the new post button by name 
+newPostButtonAll = driver.find_elements_by_class_name('_ab6-')
+newPostButton = ''
+for i in newPostButtonAll:
+    # print(i.text)
+    print(i.get_property('attributes')[0])
+    nodeVal = i.get_property('attributes')[0]['nodeValue']
+    if 'New post' in nodeVal:
+        print('this is our button')
+        newPostButton = i 
+    else:
+        print('keep lookin')
+    
+newPostButton.click()
+
+
+# find the "select from computer" button by name 
 
 # click "select from cmputer"
 actions = ActionChains(driver) 
@@ -147,6 +169,7 @@ actions.send_keys(Keys.ENTER)
 actions.perform()
 #app = Application()
 
+time.sleep(5)
 
 # same deal for pywinauto
 # this one might do it .... 
@@ -214,16 +237,21 @@ for i in nextButton:
 nextButton2.click()
 
 # find the next key again 
+time.sleep(2)
 filterNextButton = driver.find_elements_by_class_name("_acan._acao._acas")
+# filterNextButton = driver.find_elements_by_css_selector("button")
 filterNextButton2 = ''
 for i in filterNextButton:
     print(i.text)
+    print(i.get_property('attributes')[1]['nodeValue'])
+    nodeVal = i.get_property('attributes')[1]['nodeValue']
     if i.text == 'Next':
         filterNextButton2 = i
 
 filterNextButton2.click()
 
 # 4 tabs to get to the caption window 
+time.sleep(2)
 captionWindow = driver.find_elements_by_css_selector('textarea')
 captionWindow2 = ''
 for i in captionWindow:
@@ -251,7 +279,7 @@ for i in shareButton:
 
 shareButton2.click()
 
-
+driver.close()
 
 
 
