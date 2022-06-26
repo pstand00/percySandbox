@@ -40,6 +40,20 @@ from email.mime.text import MIMEText
 from email.utils import COMMASPACE, formatdate
 from email import encoders
 import smtplib
+# packages required for web scraping: 
+# need to download a seperate driver here: https://www.geeksforgeeks.org/click-button-by-text-using-python-and-selenium/
+# its called "chrome driver" instead of just "chrome" 
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.proxy import Proxy, ProxyType
+# packages required for connecting to a random proxy 
+# documentation for proxy_randomizer available here: https://pypi.org/project/proxy-randomizer/
+from proxy_randomizer import RegisteredProviders # pip install proxy_randomizer
+from proxy_randomizer.proxy import Anonymity
+import random
+
 # directory 
 wd = "C:\\Users\\Pete\\Documents\\GitHub\\percySandbox\\twitterScreenshots\\pittsburghSteelers"
 screenshotWd = wd + "\\screenshots"
@@ -64,7 +78,9 @@ emailUser = pwdDf[['personalGmail']].filter(like = 'user', axis = 0).to_string(i
 emailPw = pwdDf[['personalGmail']].filter(like = 'password', axis = 0).to_string(index=False, header= False).strip()
 toEmail = "4126805149@mms.att.net"
 fromEmail = emailUser
-# eventually [instagram]
+# instagram
+igUserName = pwdDf[['instagram_steelersTweets']].filter(like = 'user', axis = 0).to_string(index=False, header= False).strip()
+igPassword = pwdDf[['instagram_steelersTweets']].filter(like = 'password', axis = 0).to_string(index=False, header= False).strip()
 
 # connect to twitter and sweep tweets 
 # ================================================
@@ -81,7 +97,7 @@ api = tweepy.API(auth)
 # grab the tweet id, url and timestamp for each tweet currently on the web 
 j = 0 
 dfTwitterApi = pd.DataFrame(columns = ['tweetId', 'url', 'createdAt'])
-for tweet in tweepy.Cursor(api.user_timeline,id='steelers').items(250):
+for tweet in tweepy.Cursor(api.user_timeline,id='steelers').items(500):
     j = j+ 1
     # print(j)
     print('Line # ' + str(j) + ':')
@@ -169,20 +185,28 @@ else:
     # cv2.imshow('sharpen', sharpen)
     thresh = cv2.threshold(sharpen, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]    
     data = pytesseract.image_to_string(thresh, lang='eng', config='--psm 6')
+    data2 = pytesseract.image_to_string(fullImageCv, lang='eng', config='--psm 6')
     print(data)
     # === end of attempt
     # fullImageResults = pytesseract.image_to_data(fullImage)
     fullImageResults = pytesseract.image_to_data(thresh)
+    fullImageResults2 = pytesseract.image_to_data(fullImageCv)
     # fullImageResults2 = pytesseract.image_to_data(fullImage)
     fullImageResultsDf = pd.read_csv(io.StringIO(fullImageResults), sep = '\t', engine = "python", encoding = 'utf-8', error_bad_lines=False)
+    fullImageResultsDf2 = pd.read_csv(io.StringIO(fullImageResults2), sep = '\t', engine = "python", encoding = 'utf-8', error_bad_lines=False)
     # fullImageResultsDf2 = pd.read_csv(io.StringIO(fullImageResults2), sep = '\t', engine = "python", encoding = 'utf-8', error_bad_lines=False)
     # find the location of the word "Retweet" [Nth character]
     fullImageResultsDfLite = fullImageResultsDf[fullImageResultsDf.text.notnull()]
+    fullImageResultsDfLite2 = fullImageResultsDf2[fullImageResultsDf2.text.notnull()]
     # sometimes the image ai app messes up retweets, so add any close variations below: 
     # 	Retweets
     searchableStrings = ['Retweets', 'Retwests']
     fullImageResultsDfLite = fullImageResultsDfLite[fullImageResultsDfLite['text'].str.contains('|'.join(searchableStrings))]
-    retweetsTop = int(fullImageResultsDfLite['top'].to_string(index=False, header= False).strip())
+    fullImageResultsDfLite2 = fullImageResultsDfLite2[fullImageResultsDfLite2['text'].str.contains('|'.join(searchableStrings))]
+    if len(fullImageResultsDfLite) == 0:
+        retweetsTop = int(fullImageResultsDfLite2['top'].to_string(index=False, header= False).strip())
+    else:
+        retweetsTop = int(fullImageResultsDfLite['top'].to_string(index=False, header= False).strip())
     # then, crop at that location + 10 or so 
     # need to rework the specific numbers 
     left = 0
@@ -259,6 +283,210 @@ else:
             # save the image as "screenshot_padding.png"
         
     
+    # post the padded picture to instagram 
+    # =========================================================================
+    # generate a list of random proxies and pick one 
+    # ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+    rp = RegisteredProviders()
+    rp.parse_providers()
+    # generate a list of "anonymous" proxies
+    anonymous_proxies = list(
+        filter(lambda proxy: proxy.anonymity == Anonymity.ANONYMOUS, rp.proxies)
+    )
+    print(f"filtered proxies: {anonymous_proxies}")
+    # create a dataframe of only the us proxies 
+    ipDf = pd.DataFrame({'fullString':[], 'ip':[]})
+    for i in anonymous_proxies:
+        currentProxy = i.get_proxy()
+        print(type(currentProxy))
+        if 'United States' in str(i):
+            print(i)
+            print(currentProxy)
+            ipDf = ipDf.append(pd.DataFrame({'fullString':[str(i)], 'ip':[i.get_proxy()]}))
+            print('added 1 row to the df')
+
+    randoPick = [random.randint(1, 10)][0]
+    print(randoPick)
+    # select the proxy to use 
+    ipDfActive = ipDf.iloc[randoPick-1]
+    print(ipDfActive[1])
+    ipActive = ipDfActive[1]
+    # confirgure selenium connection setting 
+    # ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+    prox = Proxy()
+    prox.proxy_type = ProxyType.MANUAL
+    prox.http_proxy = ipActive
+    capabilities = webdriver.DesiredCapabilities.CHROME
+    prox.add_to_capabilities(capabilities)
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--window-size=1280,720")
+    chrome_options.binary_location = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+    driver = webdriver.Chrome("C:\\Program Files\\chromedriver_win32\\chromedriver.exe", chrome_options=chrome_options, desired_capabilities=capabilities)
+    driver.get("http://www.instagram.com")#put here the adress of your page
+    time.sleep(5)
+    
+    # trying to find the phone number 
+    # ----------------------------------------------------------------
+    usernameObjectResults = driver.find_elements_by_xpath("//*[contains( text( ), 'Phone number')]")
+    usernameObject = ''
+    for i in usernameObjectResults:
+        print(i.text)
+        if i.text == 'Phone number, username, or email':
+            print('we found a winner!')
+            usernameObject = i
+            
+    actions = ActionChains(driver) 
+    # actions.move_by_offset(usernameObject.location['x'] + 2, usernameObject.location['y'] + 2).click()
+    actions.move_to_element(usernameObject).click_and_hold()
+    actions.perform()
+    actions = ActionChains(driver) 
+    actions.send_keys(igUserName)
+    actions.perform()
+    
+    # trying to find the password
+    # ----------------------------------------------------------------
+    passwordObjectResults = driver.find_elements_by_xpath("//*[contains( text( ), 'Password')]")
+    passwordObject = ''
+    for i in passwordObjectResults:
+        print(i.text)
+        if i.text == 'Password':
+            print('we found a winner!')
+            passwordObject = i
+            
+    actions = ActionChains(driver) 
+    actions.move_to_element(passwordObject).click_and_hold()
+    actions.perform()
+    actions = ActionChains(driver) 
+    actions.send_keys(igPassword)
+    actions.perform()
+    
+    # send enter to go to the next screen 
+    # ----------------------------------------------------------------
+    actions = ActionChains(driver) 
+    actions.send_keys(Keys.ENTER)
+    actions.perform()
+    time.sleep(5)
+    
+    # select ("not now" on the second sheet )
+    # ----------------------------------------------------------------
+    page2ButtonResults = driver.find_elements_by_xpath("//*[contains( text( ), 'Not Now')]")
+    page2Button = ''
+    for i in page2ButtonResults:
+        print(i.text)
+        if i.text == 'Not Now':
+            print('we found a winner!')
+            page2Button = i
+            
+    page2Button.click()
+    time.sleep(2)
+    
+    
+    # select the ("new post" button )
+    # ----------------------------------------------------------------
+    newPostButtonResults = driver.find_elements_by_css_selector("[aria-label='New post']")
+    for i in newPostButtonResults:
+        print(i.text)
+        newPostButton = i 
+    
+    newPostButton.click()
+    time.sleep(1)
+    
+    # attempt to run the file load 
+    # ----------------------------------------------------------------
+    inputFormResults = driver.find_elements_by_css_selector('input')
+    for i in inputFormResults:
+        print(i.text)
+        inputForm = i
+    
+    # inputForm.send_keys("C:\\Users\\Pete\\Documents\\Projects\\Dynamic Cropping Test\\final2.png")
+    igLoadFileName = screenshotWd +'\\screenshot_padding.png'
+    inputForm.send_keys(igLoadFileName)
+    time.sleep(2)
+    
+    # finding the "Select crop" label 
+    # ----------------------------------------------------------------
+    selectCropButtonResults = driver.find_elements_by_css_selector("[aria-label='Select crop']")
+    for i in selectCropButtonResults:
+        print(i.text)
+        selectCropButton = i 
+    
+    
+    selectCropButton.click()
+    time.sleep(1)
+    
+    # finding the "Original" label 
+    # ----------------------------------------------------------------
+    originalLabelResults = driver.find_elements_by_xpath("//*[contains( text( ), 'Original')]")
+    originalLabel = ''
+    for i in originalLabelResults:
+        print(i.text)
+        if i.text == 'Original':
+            originalLabel = i 
+    
+    
+    
+    originalLabel.click()
+    time.sleep(1)
+    
+    # finding the "Next" button
+    # ----------------------------------------------------------------
+    nextButtonResults1 = driver.find_elements_by_xpath("//*[contains( text( ), 'Next')]")
+    nextButton1 = ''
+    for i in nextButtonResults1:
+        print(i.text)
+        nextButton1 = i
+    
+    nextButton1.click()
+    time.sleep(1)
+    
+    # finding the "Next" button again 
+    # ----------------------------------------------------------------
+    nextButtonResults2 = driver.find_elements_by_xpath("//*[contains( text( ), 'Next')]")
+    nextButton2 = ''
+    for i in nextButtonResults2:
+        print(i.text)
+        nextButton2 = i
+    
+    nextButton2.click()
+    time.sleep(1)
+    
+    # trying to find the caption portion of the screen 
+    # ----------------------------------------------------------------
+    captionResults = driver.find_elements_by_css_selector('textarea')
+    caption = ''
+    for i in captionResults:
+        print(i.text)
+        print(i.get_property('attributes')[0]['nodeValue'])
+        # print(i.get_property('attributes'))
+        if 'Write a caption' in i.get_property('attributes')[0]['nodeValue']:
+            caption = i
+    
+    caption.click()
+    actions = ActionChains(driver) 
+    # actions.send_keys('My caption <3')
+    actions.send_keys(inProcessUrl)
+    actions.perform()
+    time.sleep(1)
+        
+    # click the "share" button 
+    # ----------------------------------------------------------------
+    shareButtonResults = driver.find_elements_by_xpath("//*[contains( text( ), 'Share')]")
+    shareButton = ''
+    for i in shareButtonResults:
+        print(i.text)
+        if i.text == 'Share':
+           shareButton = i
+    
+    shareButton.click()
+    time.sleep(5)
+    
+    # driver.save_screenshot("C:\\Users\\Pete\\Downloads\\headlessScreenshot.png")
+    driver.close()
+    
+    # end of headless workspace 
+    # ============================================================
+
 
     # send a text to pete containing the image and caption 
     # ================================================
