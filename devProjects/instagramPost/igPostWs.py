@@ -92,9 +92,10 @@ from selenium.webdriver.chrome.options import Options
 
 chrome_options = Options()
 chrome_options.add_argument("--headless")
+chrome_options.add_argument("--window-size=1280,720")
 chrome_options.binary_location = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
 
-driver = webdriver.Chrome("C:\\Program Files\\chromedriver_win32\\chromedriver.exe", chrome_options=chrome_options)
+# driver = webdriver.Chrome("C:\\Program Files\\chromedriver_win32\\chromedriver.exe", chrome_options=chrome_options)
 driver = webdriver.Chrome("C:\\Program Files\\chromedriver_win32\\chromedriver.exe")
 # driver.close()
 driver.get("http://www.instagram.com")#put here the adress of your page
@@ -116,7 +117,7 @@ actions.send_keys(Keys.TAB)
 actions.perform()
 # insert password 
 actions = ActionChains(driver) 
-actions.send_keys('myPassword')
+actions.send_keys('myInstagramPw')
 actions.perform()
 # send an enter
 actions = ActionChains(driver) 
@@ -143,11 +144,12 @@ actions.perform()
 # was able to find this in developer tools 
 
 # find the new post button by name 
+time.sleep(2)
 newPostButtonAll = driver.find_elements_by_class_name('_ab6-')
 newPostButton = ''
 for i in newPostButtonAll:
     # print(i.text)
-    print(i.get_property('attributes')[0])
+    print(i.get_property('attributes')[0]['nodeValue'])
     nodeVal = i.get_property('attributes')[0]['nodeValue']
     if 'New post' in nodeVal:
         print('this is our button')
@@ -228,12 +230,16 @@ actions.perform()
 
 # find next key [or just do 9 tabs]
 nextButton = driver.find_elements_by_class_name("_acan._acao._acas")
+# nextButton = driver.find_elements_by_css_selector("button")
 nextButton2 = ''
 for i in nextButton:
     print(i.text)
+    print(i.get_property('attributes')[1]['nodeValue'])
+    nodeVal = i.get_property('attributes')[1]['nodeValue']
     if i.text == 'Next':
         nextButton2 = i
      
+        
 nextButton2.click()
 
 # find the next key again 
@@ -279,10 +285,12 @@ for i in shareButton:
 
 shareButton2.click()
 
+time.sleep(4)
+
 driver.close()
 
 
-
+# works live, but not working on headless 
 
 
 
