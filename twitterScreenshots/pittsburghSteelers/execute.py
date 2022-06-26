@@ -97,7 +97,7 @@ api = tweepy.API(auth)
 # grab the tweet id, url and timestamp for each tweet currently on the web 
 j = 0 
 dfTwitterApi = pd.DataFrame(columns = ['tweetId', 'url', 'createdAt'])
-for tweet in tweepy.Cursor(api.user_timeline,id='steelers').items(500):
+for tweet in tweepy.Cursor(api.user_timeline,id='steelers').items(1000):
     j = j+ 1
     # print(j)
     print('Line # ' + str(j) + ':')
