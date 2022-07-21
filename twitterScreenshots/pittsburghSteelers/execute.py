@@ -165,7 +165,7 @@ else:
         await page.setViewport({"width": 1600, "height": 900})
         await page.goto(inProcessUrl)
         #await page.goto(inProcessUrl, {"waitUntil" : "networkidle0"})
-        time.sleep(5)
+        time.sleep(7)
         await page.screenshot({'path': screenshotFileName, 'fullPage':True})
         await browser.close()
     
