@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        /* Initially, hide the extra text that
+            can be revealed with the button */
+        #moreText {
+
+            /* Display nothing for the element */
+            display: none;
+        }
+
+        .bodyAll {
+        border:10px solid #f8b366;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        }
+
+        .bodyText {
+        margin-left: 5px;
+        margin-right: 5px;
+        }
+
+        .buttonFmt {
+            background-color: #f05d55; color: white; border: none;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+
+    </style>
+</head>
+
+<body class = "bodyAll">
+
+<body>
+    <h1 class = "bodyText" style="color: #f05d55;">
+        Niche & Potatoes
+    </h1>
+    
+    <h3 class = "bodyText">Article 1</h3>
+
+    <p></p>
+    <!--the actual text to include-->
+    <p class = "bodyText">
+        GeeksforGeeks was born out of necessity-
+        a need to provide a convenient and
+        one-stop educational portal to all the
+        students of Computer Science.
+        <span class = "bodyText" id="points">...</span>
+
+        <!-- Define the text that would be
+            hidden by default and only shown
+            when clicked on the button -->
+        <span class = "bodyText" id="moreText"> This necessity was
+            as personal to me as it was universal.
+            This need combined with my passion for
+            teaching resulted in GeeksforGeeks as
+            we know today. My message to you, in
+            our inaugural edition of Geeks Digest,
+            would be that if you are looking for
+            a problem to work on, you don’t need
+            to look very far for it. All you should
+            do is to look around yourself.
+        </span>
+    </p>
+
+
+    <!-- Trigger toggleText() when the
+        button is clicked -->
+    <button onclick="toggleText()" id="textButton" class = "buttonFmt">
+        Show More
+    </button>
+
+    <script>
+        function toggleText() {
+
+            // Get all the elements from the page
+            var points =
+                document.getElementById("points");
+
+            var showMoreText =
+                document.getElementById("moreText");
+
+            var buttonText =
+                document.getElementById("textButton");
+
+            // If the display property of the dots
+            // to be displayed is already set to
+            // 'none' (that is hidden) then this
+            // section of code triggers
+            if (points.style.display === "none") {
+
+                // Hide the text between the span
+                // elements
+                showMoreText.style.display = "none";
+
+                // Show the dots after the text
+                points.style.display = "inline";
+
+                // Change the text on button to
+                // 'Show More'
+                buttonText.innerHTML = "Show More";
+            }
+
+            // If the hidden portion is revealed,
+            // we will change it back to be hidden
+            else {
+
+                // Show the text between the
+                // span elements
+                showMoreText.style.display = "inline";
+
+                // Hide the dots after the text
+                points.style.display = "none";
+
+                // Change the text on button
+                // to 'Show Less'
+                buttonText.innerHTML = "Show Less";
+            }
+        }
+    </script>
+</body>
+
+<body>
+<p></p>
+<p></p>
+</body>
+
+<head>
+    <style>
+        /* Initially, hide the extra text that
+            can be revealed with the button */
+        #moreText2 {
+
+            /* Display nothing for the element */
+            display: none;
+        }
+    </style>
+</head>
+
+
+
+<body>
+    <h3 class = "bodyText">Article 2</h3>
+    <p></p>
+    <p class = "bodyText">
+        GeeksforGeeks was born out of necessity-
+        a need to provide a convenient and
+        one-stop educational portal to all the
+        students of Computer Science.
+        <span id="points2" class = "bodyText">...</span>
+
+        <!-- Define the text that would be
+            hidden by default and only shown
+            when clicked on the button -->
+        <span id="moreText2" class = "bodyText"> This necessity was
+            as personal to me as it was universal.
+            This need combined with my passion for
+            teaching resulted in GeeksforGeeks as
+            we know today. My message to you, in
+            our inaugural edition of Geeks Digest,
+            would be that if you are looking for
+            a problem to work on, you don’t need
+            to look very far for it. All you should
+            do is to look around yourself.
+        </span>
+    </p>
+
+
+    <!-- Trigger toggleText() when the
+        button is clicked -->
+    <button onclick="toggleText2()" id="textButton2" class = "bodyText">
+        Show More
+    </button>
+
+    <script>
+        function toggleText2() {
+
+            // Get all the elements from the page
+            var points2 =
+                document.getElementById("points2");
+
+            var showMoreText2 =
+                document.getElementById("moreText2");
+
+            var buttonText2 =
+                document.getElementById("textButton2");
+
+            // If the display property of the dots
+            // to be displayed is already set to
+            // 'none' (that is hidden) then this
+            // section of code triggers
+            if (points2.style.display === "none") {
+
+                // Hide the text between the span
+                // elements
+                showMoreText2.style.display = "none";
+
+                // Show the dots after the text
+                points2.style.display = "inline";
+
+                // Change the text on button to
+                // 'Show More'
+                buttonText2.innerHTML = "Show More";
+            }
+
+            // If the hidden portion is revealed,
+            // we will change it back to be hidden
+            else {
+
+                // Show the text between the
+                // span elements
+                showMoreText2.style.display = "inline";
+
+                // Hide the dots after the text
+                points2.style.display = "none";
+
+                // Change the text on button
+                // to 'Show Less'
+                buttonText2.innerHTML = "Show Less";
+            }
+        }
+    </script>
+
+    <h3 class = "bodyText">Article 3: Pete's First Edits</h3>
+    <p id = "dynamicTextAttempt1" class = 'bodyText'></p>
+    <script>
+    var fullTextOrig = `Here is 
+    a bunch 
+    of text ... 
+    how will it render?`
+    var strYoOrig = document.getElementById('dynamicTextAttempt1'); 
+    strYoOrig.innerHTML = fullTextOrig
+    </script>
+    </body>
+
+
+
+<head>
+    <style>
+        /* Initially, hide the extra text that
+            can be revealed with the button */
+        #previewText2 {
+
+            /* Display nothing for the element */
+            display: none;
+        }
+    </style>
+</head>
+
+    <body>
+    <h3 class = "bodyText">Article 4: Pete's Dynamic Editing</h3>
+    <p id = "previewText1" class = "bodyText">
+        <span id="points3" class = "bodyText">...</span>
+        <span id="previewText2" class = "bodyText"></span>
+    </p>    
+    <button onclick="toggleText3()" id="textButton3" class = "bodyText">
+        Show More
+    </button>
+    <script>
+        var fullText = `This necessity was as personal to me as it was universal. 
+        This need combined with my passion for 
+        teaching resulted in GeeksforGeeks as 
+        we know today. My message to you, in our inaugural edition of Geeks Digest, 
+        would be that if you are looking for 
+        a problem to work on, you don’t need to 
+        look very far for it. All you should do is to look around yourself.`
+        // find the first space after the 50th character 
+        var secondHalfStage = fullText.substring(50)
+        var result = secondHalfStage.indexOf(' ')
+        var startText = fullText.substring(0, 50 + result)
+        var endText = fullText.substring(50 + result)
+        var preText1 = document.getElementById('previewText1'); 
+        preText1.innerHTML = startText
+        var preText2 = document.getElementById('previewText2'); 
+        preText2.innerHTML = endText
+    </script>
+
+
+
+    <script>
+        function toggleText3() {
+
+            // Get all the elements from the page
+            var points3 =
+                document.getElementById("points3");
+
+            var showMoreText3 =
+                document.getElementById("previewText2");
+
+            var buttonText3 =
+                document.getElementById("textButton3");
+
+            // If the display property of the dots
+            // to be displayed is already set to
+            // 'none' (that is hidden) then this
+            // section of code triggers
+            if (points3.style.display === "none") {
+
+                // Hide the text between the span
+                // elements
+                showMoreText3.style.display = "none";
+
+                // Show the dots after the text
+                points3.style.display = "inline";
+
+                // Change the text on button to
+                // 'Show More'
+                buttonText3.innerHTML = "Show More";
+            }
+
+            // If the hidden portion is revealed,
+            // we will change it back to be hidden
+            else {
+
+                // Show the text between the
+                // span elements
+                showMoreText3.style.display = "inline";
+
+                // Hide the dots after the text
+                points3.style.display = "none";
+
+                // Change the text on button
+                // to 'Show Less'
+                buttonText3.innerHTML = "Show Less";
+            }
+        }
+    </script>
+
+</body>
+
+
+<!-- page break to make sure the image shows up after the button -->
+
+<!--  test to have some dynamic linking -->
+<head>
+    <style>
+        .imgCtr {
+        padding: 0;
+        display: block;
+        margin: 0 auto;
+        max-height: 100%;
+        max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <a id="dynamicLink" href="" target="_blank" rel="noopener noreferrer"><img id="dynamicImg" class="imgCtr" src="" width = "210.75" height = "174.25" /> </a>
+</body>
+</div>
+<script>
+    var link = document.getElementById('dynamicLink'); 
+    link.href = "https://nicheandpotatoes.substack.com/"
+    var img = document.getElementById('dynamicImg'); 
+    img.src = "https://substackcdn.com/image/fetch/w_848,c_limit,f_webp,q_auto:best,fl_progressive:steep/https%3A%2F%2Fbucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com%2Fpublic%2Fimages%2F24569923-b38e-4090-b8ab-c5383895225c_843x697.png"
+</script>
+
+<body>
+    <a id="dynamicLink2" href="" target="_blank" rel="noopener noreferrer"><img id="dynamicImg2" width = "160" height = "177.75" /> </a>
+</body>
+<!-- </div> -->
+<script>
+    var link = document.getElementById('dynamicLink2'); 
+    link.href = "https://www.chewy.com/g/give-back"
+    var img = document.getElementById('dynamicImg2'); 
+    img.src = "https://64.media.tumblr.com/7d86f75cc6b652e5a71bccad0bc302c1/8618297169f178ac-ae/s1280x1920/c36cc78e971aa14b8b0dad3a2b81cf8e88d61847.jpg"
+</script>
+
+</body>
+
+</html>
