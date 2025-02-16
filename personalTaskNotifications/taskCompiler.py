@@ -35,6 +35,12 @@ try:
     # email
     from email.mime.base import MIMEBase 
     from email import encoders 
+    from datetime import datetime, timedelta, timezone
+    
+    # define a few variables 
+    currTime = datetime.now()
+    time_formalTime = currTime.strftime("%A in %B [%Y%m%d]")
+    
     # ==========================================================================================
     # notion sweep [beginning]
     # ==========================================================================================
@@ -188,12 +194,12 @@ try:
     # ==========================================================================================    
     
     # start the html string 
-    bodyStr = str('<html><body><p><font color = "#404041">')
+    bodyStr = str('<html><body>')
     # iterate over status 
     # ==========================================================================================
     for i in headerTaskDf1['status'].unique():
         print(i)
-        fontColorVar = "#404041"
+        fontColorVar = "#66ff33" # 404041 .. but auto updates to a lighter text due to dark mode ... change to a color gradient and this should resolve itself
         if i == 'Not started':
             fontColorVar = "#7e7e81"
         elif i == 'Backlog':
@@ -206,11 +212,11 @@ try:
         elif i == 'Backlog':
             headerFontColorVar = "#964de6"
         elif i == 'Pinned':
-            headerFontColorVar = "#be8fef"
+            headerFontColorVar = "#be8fef" 
         
-        listItemStr = '<p><font color = "' + fontColorVar + '"><font color = "' + headerFontColorVar + '"><b><font size = 3>' + i + "</font></b></font></font></p>"
+        listItemStr = '<p><font color = "' + headerFontColorVar + '"><b><font size = 3>' + i + "</font></b></font></p>"
         bodyStr = bodyStr + listItemStr
-        listItemStr = "<ul>"
+        listItemStr = "<ul>" + '<font color = "' + fontColorVar + '">' +  '<font size = 2>'
         bodyStr = bodyStr + listItemStr        
         # loop over the actual tasks 
         # ==========================================================================================
@@ -238,7 +244,7 @@ try:
                 # ==========================================================================================            
                 if headerTaskDf1[(headerTaskDf1['id'] == j)]['otherTags'].to_string(index=False, header= False).strip() != '':
                     taskTags = headerTaskDf1[(headerTaskDf1['id'] == j)]['otherTags'].to_string(index=False, header= False).strip()
-                    taskStr = "<li>" + taskTags + "</li>"
+                    taskStr = "<li>" + "<font size = 1>Tags: <i>" + taskTags + "</i></font></li>"
                     bodyStr = bodyStr + taskStr          
                 else: 
                     print('do nothing ... no tags')
@@ -258,24 +264,24 @@ try:
                         subtaskStatus =  stageSubtaskDf['status'].to_string(index=False, header= False).strip()
                         textVar2 = subtaskTaskName + ' (' + subtaskStatus + ') ' +  '<a href="' + subtaskUrl + '" style="text-decoration:none;">' + '&#128267;' + '</a>'
                         print(textVar2)
-                        listItemStr = "<li>" + textVar2 + "</li>"
+                        listItemStr = "<li>" + "<font size = 1>" + textVar2 + "</font>" + "</li>"
                         bodyStr = bodyStr + listItemStr
                 # end of sub-items
         
                 listItemStr = "</ul>"
                 bodyStr = bodyStr + listItemStr       
         
-        listItemStr = "</ul>"
+        listItemStr = "</ul>" + "</font>" + "</font>"
         bodyStr = bodyStr + listItemStr
                 
 
             
             
-    bodyStr = bodyStr + "</font></p></body></html>"
+    bodyStr = bodyStr + "</body></html>"
     
     # send the mail 
     msg = MIMEMultipart("alternative")
-    msg["Subject"] = "Sample Email"
+    msg["Subject"] = '=?utf-8?Q?=F0=9F=A4=B9?=' + " Personal To Do's for a " + time_formalTime
     msg["From"] = "Some Personal To Do's <" + emailUser + ">"
     msg["To"] = "Human Peter <" + emailRecipient + ">"
     bodyMime = MIMEText(bodyStr, "html")
