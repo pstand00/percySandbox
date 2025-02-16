@@ -15,6 +15,7 @@ Created on Sat Feb 15 16:04:19 2025
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import pandas as pd
 fm = 'C:\\Users\\Pete'
 pwdPath = fm + '\\Documents\\systemScripts\\secrets.json'
 pwdDf = pd.read_json(pwdPath)
@@ -29,7 +30,6 @@ emailRecipient = emailUser
 try:
     # import the additional modules 
     import requests
-    import pandas as pd
     import numpy as np 
     pd.set_option('display.max_colwidth', -1)
     # email
@@ -224,7 +224,7 @@ try:
             # add the task name 
             # ==========================================================================================            
             # taskStr = "<li>" + taskName + " ~~ " + taskUrl + "</li>"
-            taskStr = "<li>" + taskName  + '<a href="' + taskUrl + '">' + '&#128267;' + '</a>' + "</li>"
+            taskStr = "<li>" + taskName  + ' <a href="' + taskUrl + '" style="text-decoration:none;">' + '&#128267;' + '</a>' + "</li>"
             bodyStr = bodyStr + taskStr         
             # add the tags & subitems 
             # ==========================================================================================            
@@ -256,7 +256,7 @@ try:
                         subtaskTaskName = stageSubtaskDf['taskName'].to_string(index=False, header= False).strip() 
                         subtaskUrl = stageSubtaskDf['url'].to_string(index=False, header= False).strip() 
                         subtaskStatus =  stageSubtaskDf['status'].to_string(index=False, header= False).strip()
-                        textVar2 = subtaskTaskName + ' (' + subtaskStatus + ')' +  '<a href="' + subtaskUrl + '">' + '&#128267;' + '</a>'
+                        textVar2 = subtaskTaskName + ' (' + subtaskStatus + ') ' +  '<a href="' + subtaskUrl + '" style="text-decoration:none;">' + '&#128267;' + '</a>'
                         print(textVar2)
                         listItemStr = "<li>" + textVar2 + "</li>"
                         bodyStr = bodyStr + listItemStr
