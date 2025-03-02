@@ -257,7 +257,17 @@ try:
             # add the task name 
             # ==========================================================================================            
             # taskStr = "<li>" + taskName + " ~~ " + taskUrl + "</li>"
-            taskStr = "<li>" + taskName  + ' <a href="' + taskUrl + '" style="text-decoration:none;">' + '&#128267;' + '</a>' + "</li>"
+            taskStr = ("<div style=\"width:500px;height:35px;margin:0 auto;\">" 
+                       + "<li>"
+                       + "<div style=\"max-height:0;max-width:0;\"><div style=\"color:pink;width:300px;height:auto;margin-top:10px;margin-left:30px;display:inline-block;text:left;font-size:15px\">" 
+                       + taskName  
+                       + "</div></div>"
+                       + "<div style=\"max-height:0;max-width:0;\"><div style=\"color:#FF5E54;width:300px;height:auto;margin-top:9px;margin-left:29px;display:inline-block;text:left;font-size:15px\">" 
+                       + taskName  
+                       + ' <a href="' + taskUrl + '" style="text-decoration:none;">' + '&#128267;' + '</a>' 
+                       + "</div></div>"
+                       
+                       + "</li>" + "</div>")
             bodyStr = bodyStr + taskStr         
             # add the tags & subitems 
             # ==========================================================================================            
@@ -265,13 +275,22 @@ try:
                 print('no tags or subitems!')
             else:
                 print('found something!')
-                listItemStr = "<ul>"
+                listItemStr = "<ul>" 
                 bodyStr = bodyStr + listItemStr           
                 # add any tags 
                 # ==========================================================================================            
                 if headerTaskDf1[(headerTaskDf1['id'] == j)]['otherTags'].to_string(index=False, header= False).strip() != '':
                     taskTags = headerTaskDf1[(headerTaskDf1['id'] == j)]['otherTags'].to_string(index=False, header= False).strip()
-                    taskStr = "<font color = \"#FFE459\"><li>" + "<font size = 1>Tags: <i>" + taskTags + "</i></font></li></font>"
+                    taskStr = ("<div style=\"width:auto;height:35px;margin:0 auto;\">" + 
+                        "<font color = \"#FFE459\"><li>" + 
+                        "<div style=\"max-height:0;max-width:0;\"><div style=\"color:#FF5E54;width:300px;height:auto;margin-top:9px;margin-left:29px;display:inline-block;text:left;font-size:25px\">" + 
+                        "<font size = 1>Tags: <i>" + taskTags + "</i></font>"
+                        + "</div></div>"
+                        + "<div style=\"max-height:0;max-width:0;\"><div style=\"color:pink;width:300px;height:auto;margin-top:10px;margin-left:30px;display:inline-block;text:left;font-size:25px\">" + 
+                        "<font size = 1>Tags: <i>" + taskTags + "</i></font>"
+                        + "</div></div>"
+                        + "</li></font>"  + "</div>"
+                        )
                     bodyStr = bodyStr + taskStr          
                 else: 
                     print('do nothing ... no tags')
@@ -291,7 +310,15 @@ try:
                         subtaskStatus =  stageSubtaskDf['status'].to_string(index=False, header= False).strip()
                         textVar2 = subtaskTaskName + ' (' + subtaskStatus + ') ' +  '<a href="' + subtaskUrl + '" style="text-decoration:none;">' + '&#128267;' + '</a>'
                         print(textVar2)
-                        listItemStr = "<li>" + "<font size = 1>" + textVar2 + "</font>" + "</li>"
+                        listItemStr = ("<div style=\"width:auto;height:35px;margin:0 auto;\">" + "<li>" 
+                            + "<div style=\"max-height:0;max-width:0;\"><div style=\"color:#FF5E54;width:300px;height:auto;margin-top:9px;margin-left:29px;display:inline-block;text:left;font-size:25px\">" 
+                            + "<font size = 1>" + textVar2 + "</font>" 
+                            + "</div></div>"
+                            + "<div style=\"max-height:0;max-width:0;\"><div style=\"color:green;width:300px;height:auto;margin-top:10px;margin-left:30px;display:inline-block;text:left;font-size:25px\">" 
+                            + "<font size = 1>" + textVar2 + "</font>" 
+                            + "</div></div>"
+                            + "</li>"+ "</div>"
+                            )
                         bodyStr = bodyStr + listItemStr
                 # end of sub-items
         
