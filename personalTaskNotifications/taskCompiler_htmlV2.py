@@ -194,25 +194,25 @@ try:
     # ==========================================================================================    
     
     # start the html string 
-    bodyStr = str('<html><body><div style="background-color:#1283EB;"><div style="margin-left:10px;width:auto"><br></br>')    
+    bodyStr = str('<html><body><div style="background-color:#282828;"><div style="margin-left:10px;width:auto"><br></br>')    
     # iterate over status 
     # ==========================================================================================
     for i in headerTaskDf1['status'].unique():
         print(i)
-        fontColorVar = "#FF5E54" # 404041 .. but auto updates to a lighter text due to dark mode ... change to a color gradient and this should resolve itself
+        fontColorVar = "#F8F3EC" # 404041 .. but auto updates to a lighter text due to dark mode ... change to a color gradient and this should resolve itself
         if i == 'Not started':
-            fontColorVar = "#FF5E54"
+            fontColorVar = "#F8F3EC"
         elif i == 'Backlog':
-            fontColorVar = "#FF5E54"
+            fontColorVar = "#F8F3EC"
         elif i == 'Pinned':
-            fontColorVar = "#FF5E54"
-        headerFontColorVar = "#282828"
+            fontColorVar = "#F8F3EC"
+        headerFontColorVar = "#FF5E54"
         if i == 'Not started':
-            headerFontColorVar = "#282828"
+            headerFontColorVar = "#FF5E54"
         elif i == 'Backlog':
-            headerFontColorVar = "#282828"
+            headerFontColorVar = "#FF5E54"
         elif i == 'Pinned':
-            headerFontColorVar = "#282828" 
+            headerFontColorVar = "#FF5E54" 
         
         listItemStr = '<p><font color = "' + headerFontColorVar + '"><b><font size = 3>' + i + "</font></b></font></p>"
         bodyStr = bodyStr + listItemStr
@@ -244,7 +244,7 @@ try:
                 # ==========================================================================================            
                 if headerTaskDf1[(headerTaskDf1['id'] == j)]['otherTags'].to_string(index=False, header= False).strip() != '':
                     taskTags = headerTaskDf1[(headerTaskDf1['id'] == j)]['otherTags'].to_string(index=False, header= False).strip()
-                    taskStr = "<font color = \"#FFE459\"><li>" + "<font size = 1>Tags: <i>" + taskTags + "</i></font></li></font>"
+                    taskStr = "<font color = \"#2B8F5D\"><li>" + "<font size = 1>Tags: <i>" + taskTags + "</i></font></li></font>"
                     bodyStr = bodyStr + taskStr          
                 else: 
                     print('do nothing ... no tags')
