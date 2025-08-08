@@ -31,7 +31,7 @@ try:
     # import the additional modules 
     import requests
     import numpy as np 
-    pd.set_option('display.max_colwidth', -1)
+    pd.set_option('display.max_colwidth', None)
     # email
     from email.mime.base import MIMEBase 
     from email import encoders 
@@ -140,7 +140,8 @@ try:
         print(string_priority)
         print(resDetails['results'][i]['properties']['Parent item']['id'])
         temp_df = pd.DataFrame(data = [[string_name, temp_status, temp_parent_id, temp_id, string_oTag, string_assignee, string_priority, temp_url]], columns = ['taskName', 'status', 'parentId', 'id', 'otherTags', 'assignee', 'priority', 'url'])
-        taskDf1 = taskDf1.append(temp_df)
+        # taskDf1 = taskDf1.append(temp_df)
+        taskDf1 = pd.concat([taskDf1, temp_df], ignore_index=True)
         # print(len(resDetails['results'][i]['properties']['Sub-item']['relation']))
         temp_child = ''
         if len(resDetails['results'][i]['properties']['Sub-item']['relation']) > 0:
@@ -149,7 +150,8 @@ try:
                 # print(resDetails['results'][i]['properties']['Sub-item']['relation'][j]['id'])
                 temp_child = resDetails['results'][i]['properties']['Sub-item']['relation'][j]['id']
                 temp_child_df = pd.DataFrame(data = [[temp_id, temp_child]], columns = ['parentId', 'id'])
-                subTaskMappingDf = subTaskMappingDf.append(temp_child_df)
+                # subTaskMappingDf = subTaskMappingDf.append(temp_child_df)
+                subTaskMappingDf = pd.concat([subTaskMappingDf, temp_child_df], ignore_index=True)
     
     # omit "done" items 
     taskDf1 = taskDf1[(taskDf1['status'] != 'Done') ]
